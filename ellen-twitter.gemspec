@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "ellen"
-  spec.add_dependency "twitterstream"
+  spec.add_dependency "twitter", ">= 5.0.0"
   spec.add_development_dependency "bundler", "~> 1.6"
   spec.add_development_dependency "rake"
 end
