@@ -1,3 +1,6 @@
+## 0.0.3
+* Rename: Ellen -> Ruboty
+
 ## 0.0.2
 * Improve REST API performance
 
