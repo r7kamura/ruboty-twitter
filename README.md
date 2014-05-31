@@ -1,10 +1,10 @@
-# Ellen::Twitter
-An [Ellen](https://github.com/r7kamura/ellen) adapter for twitter user-stream API.
+# Ruboty::Twitter
+An [Ruboty](https://github.com/r7kamura/ruboty) adapter for twitter user-stream API.
 
 ## Usage
 ```ruby
 # Gemfile
-gem "ellen-twitter"
+gem "ruboty-twitter"
 ```
 
 ## ENV

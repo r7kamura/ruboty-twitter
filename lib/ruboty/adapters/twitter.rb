@@ -1,7 +1,7 @@
 require "mem"
 require "twitter"
 
-module Ellen
+module Ruboty
   module Adapters
     class Twitter < Base
       include Mem
