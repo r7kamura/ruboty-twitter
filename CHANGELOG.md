@@ -1,3 +1,7 @@
+## 0.0.4
+* Fix adapter interface
+* Support `in_reply_to_status_id`
+
 ## 0.0.3
 * Rename: Ellen -> Ruboty
 
