@@ -16,8 +16,18 @@ module Ruboty
         listen
       end
 
-      def say(body)
-        client.update(body)
+      def say(message)
+        case message
+        when String
+          body = message
+        when Hash
+          body = message[:body]
+          if tweet = message[:original][:tweet]
+            options = { in_reply_to_status_id: tweet.id }
+          end
+        end
+
+        client.update(body, options)
       end
 
       private
@@ -26,7 +36,11 @@ module Ruboty
         stream.user do |tweet|
           case tweet
           when ::Twitter::Tweet
-            robot.receive(body: tweet.text)
+            robot.receive(
+              body: tweet.text,
+              from: tweet.user.screen_name,
+              tweet: tweet
+            )
           end
         end
       end
