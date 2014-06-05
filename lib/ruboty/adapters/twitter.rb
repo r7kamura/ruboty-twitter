@@ -1,3 +1,4 @@
+require "active_support/core_ext/object/try"
 require "mem"
 require "twitter"
 
@@ -17,17 +18,7 @@ module Ruboty
       end
 
       def say(message)
-        case message
-        when String
-          body = message
-        when Hash
-          body = message[:body]
-          if tweet = message[:original][:tweet]
-            options = { in_reply_to_status_id: tweet.id }
-          end
-        end
-
-        client.update(body, options)
+        client.update(message[:body], in_reply_to_status_id: message[:original][:tweet].try(:id))
       end
 
       private
