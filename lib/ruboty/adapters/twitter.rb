@@ -13,6 +13,7 @@ module Ruboty
       env :TWITTER_ACCESS_TOKEN_SECRET, "Twitter access token secret"
 
       def run
+        Ruboty.logger.debug("#{self.class}##{__method__} started")
         abortable
         listen
         Ruboty.logger.debug("#{self.class}##{__method__} finished")
