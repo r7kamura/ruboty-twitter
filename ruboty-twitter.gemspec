@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
+  spec.add_dependency "mem"
   spec.add_dependency "ruboty"
   spec.add_dependency "twitter", ">= 5.0.0"
   spec.add_development_dependency "bundler", "~> 1.6"
