@@ -1,3 +1,6 @@
+## 0.0.6
+- Add debug message about running
+
 ## 0.0.5
 - Print debug message on tweet
 
