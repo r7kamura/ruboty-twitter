@@ -1,3 +1,6 @@
+## 0.0.5
+* Print debug message on tweet
+
 ## 0.0.4
 * Fix adapter interface
 * Support `in_reply_to_status_id`
