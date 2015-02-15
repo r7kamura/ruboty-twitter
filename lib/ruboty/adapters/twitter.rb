@@ -15,6 +15,7 @@ module Ruboty
       def run
         abortable
         listen
+        Ruboty.logger.debug("#{self.class}##{__method__} finished")
       end
 
       def say(message)
