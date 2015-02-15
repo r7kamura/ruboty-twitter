@@ -27,6 +27,7 @@ module Ruboty
         stream.user do |tweet|
           case tweet
           when ::Twitter::Tweet
+            Ruboty.logger.debug("@#{tweet.user.screen_name}: #{tweet.text}")
             robot.receive(
               body: tweet.text,
               from: tweet.user.screen_name,
