@@ -1,3 +1,6 @@
+## 0.0.7
+- Add follow-back option
+
 ## 0.0.6
 - Add debug message about running
 
