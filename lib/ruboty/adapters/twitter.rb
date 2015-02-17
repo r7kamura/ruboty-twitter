@@ -7,10 +7,11 @@ module Ruboty
     class Twitter < Base
       include Mem
 
-      env :TWITTER_CONSUMER_KEY, "Twitter consumer key (a.k.a. API key)"
-      env :TWITTER_CONSUMER_SECRET, "Twitter consumer secret (a.k.a. API secret)"
       env :TWITTER_ACCESS_TOKEN, "Twitter access token"
       env :TWITTER_ACCESS_TOKEN_SECRET, "Twitter access token secret"
+      env :TWITTER_AUTO_FOLLOW_BACK, "Pass 1 to follow back followers (optional)", optional: true
+      env :TWITTER_CONSUMER_KEY, "Twitter consumer key (a.k.a. API key)"
+      env :TWITTER_CONSUMER_SECRET, "Twitter consumer secret (a.k.a. API secret)"
 
       def run
         Ruboty.logger.debug("#{self.class}##{__method__} started")
@@ -25,16 +26,28 @@ module Ruboty
 
       private
 
+      def enabled_to_auto_follow_back?
+        ENV["TWITTER_AUTO_FOLLOW_BACK"] == "1"
+      end
+
       def listen
-        stream.user do |tweet|
-          case tweet
+        stream.user do |message|
+          case message
           when ::Twitter::Tweet
-            Ruboty.logger.debug("@#{tweet.user.screen_name}: #{tweet.text}")
+            Ruboty.logger.debug("#{message.user.screen_name} tweeted #{message.text.inspect}")
             robot.receive(
-              body: tweet.text,
-              from: tweet.user.screen_name,
-              tweet: tweet
+              body: message.text,
+              from: message.user.screen_name,
+              tweet: message
             )
+          when ::Twitter::Streaming::Event
+            if message.name == :follow
+              Ruboty.logger.debug("#{message.source.screen_name} followed #{message.target.screen_name}")
+              if enabled_to_auto_follow_back? && message.target.screen_name == robot.name
+                Ruboty.logger.debug("Trying to follow back #{message.source.screen_name}")
+                client.follow(message.source.screen_name)
+              end
+            end
           end
         end
       end
