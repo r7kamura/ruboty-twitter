@@ -34,10 +34,12 @@ module Ruboty
         stream.user do |message|
           case message
           when ::Twitter::Tweet
-            Ruboty.logger.debug("#{message.user.screen_name} tweeted #{message.text.inspect}")
+            retweeted = message.retweeted_status.is_a?(::Twitter::Tweet)
+            tweet = retweeted ? message.retweeted_status : message
+            Ruboty.logger.debug("#{tweet.user.screen_name} tweeted #{tweet.text.inspect}")
             robot.receive(
-              body: message.text,
-              from: message.user.screen_name,
+              body: tweet.text,
+              from: tweet.user.screen_name,
               tweet: message
             )
           when ::Twitter::Streaming::Event
