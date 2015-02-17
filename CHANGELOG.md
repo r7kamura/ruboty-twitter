@@ -1,3 +1,6 @@
+## 0.0.8
+- Change :from value on retweet from retweeter to tweeter
+
 ## 0.0.7
 - Add follow-back option
 
