@@ -1,6 +1,7 @@
 require "active_support/core_ext/object/try"
 require "mem"
 require "twitter"
+require "tweetstream"
 
 module Ruboty
   module Adapters
@@ -31,27 +32,24 @@ module Ruboty
       end
 
       def listen
-        stream.user do |message|
-          case message
-          when ::Twitter::Tweet
-            retweeted = message.retweeted_status.is_a?(::Twitter::Tweet)
-            tweet = retweeted ? message.retweeted_status : message
-            Ruboty.logger.debug("#{tweet.user.screen_name} tweeted #{tweet.text.inspect}")
-            robot.receive(
-              body: tweet.text,
-              from: tweet.user.screen_name,
-              tweet: message
-            )
-          when ::Twitter::Streaming::Event
-            if message.name == :follow
-              Ruboty.logger.debug("#{message.source.screen_name} followed #{message.target.screen_name}")
-              if enabled_to_auto_follow_back? && message.target.screen_name == robot.name
-                Ruboty.logger.debug("Trying to follow back #{message.source.screen_name}")
-                client.follow(message.source.screen_name)
-              end
-            end
+        stream.on_timeline_status do |message|
+          retweeted = message.retweeted_status.is_a?(::Twitter::Tweet)
+          tweet = retweeted ? message.retweeted_status : message
+          Ruboty.logger.debug("#{tweet.user.screen_name} tweeted #{tweet.text.inspect}")
+          robot.receive(
+            body: tweet.text,
+            from: tweet.user.screen_name,
+            tweet: message
+          )
+        end
+        stream.on_event(:follow) do |event|
+          Ruboty.logger.debug("#{event[:source][:screen_name]} followed #{event[:target][:screen_name]}")
+          if enabled_to_auto_follow_back? && event[:target][:screen_name] == robot.name
+            Ruboty.logger.debug("Trying to follow back #{event[:source][:screen_name]}")
+            client.follow(event[:source][:screen_name])
           end
         end
+        stream.userstream
       end
 
       def client
@@ -65,12 +63,13 @@ module Ruboty
       memoize :client
 
       def stream
-        ::Twitter::Streaming::Client.new do |config|
-          config.consumer_key        = ENV["TWITTER_CONSUMER_KEY"]
-          config.consumer_secret     = ENV["TWITTER_CONSUMER_SECRET"]
-          config.access_token        = ENV["TWITTER_ACCESS_TOKEN"]
-          config.access_token_secret = ENV["TWITTER_ACCESS_TOKEN_SECRET"]
-        end
+        ::TweetStream::Client.new(
+          consumer_key: ENV["TWITTER_CONSUMER_KEY"],
+          consumer_secret: ENV["TWITTER_CONSUMER_SECRET"],
+          oauth_token: ENV["TWITTER_ACCESS_TOKEN"],
+          oauth_token_secret: ENV["TWITTER_ACCESS_TOKEN_SECRET"],
+          auth_method: :oauth
+        )
       end
       memoize :stream
 
