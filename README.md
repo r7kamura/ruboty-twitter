@@ -1,4 +1,8 @@
 # Ruboty::Twitter
+
+> [!NOTE]
+> Twitter's API has changed and this plugin no longer works, so it is archived. If you would like to take over maintenance, please contact me.
+
 An [Ruboty](https://github.com/r7kamura/ruboty) adapter for twitter user-stream API.
 
 ## Usage
